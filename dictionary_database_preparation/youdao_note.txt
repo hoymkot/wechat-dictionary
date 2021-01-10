@@ -1,0 +1,7 @@
+document.getElementsByClassName("trans-container")
+css-selector: .trans-container
+remove <ul></ul><li>
+replace </li> with \n
+
+
+Collins

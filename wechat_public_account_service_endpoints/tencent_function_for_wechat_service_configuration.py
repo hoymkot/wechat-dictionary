@@ -1,34 +1,30 @@
 # -*- coding: utf8 -*-
 import hashlib
 #
-# Tencent Cloud Serverless Function implementation for WeChat Public Account Service Configuration (First Step)
-# Reference: 入门指引 https://developers.weixin.qq.com/doc/offiaccount/Getting_Started/Getting_Started_Guide.html
-# Note that the example code in the reference used Python 2 but we are using Python 3 here, so the code are different while we are using map() and hash()
+# Tencent Cloud Serverless Function implementation for WeChat Public Account
+# Note that we can port this function to other platform as long as the parameter "params" to registration(params)
+# has the following attributes: signature , timestamp, nonce, and echostr
 #
-
-def main_handler(event, context):
+# this code is for Account Service Configuration (First Step). We give WeChat a callback link on the console
+# and then WeChat access this link to invoke this method as the first step.
+# Reference: 入门指引 https://developers.weixin.qq.com/doc/offiaccount/Getting_Started/Getting_Started_Guide.html
+# Note that the example code in the reference used Python 2 but we are using Python 3 here,
+# so the code are different while we are using map() and hash()
+#
+def registration(params, token):
     try:
-        if len(event) == 0 or event.get("queryString") is None or len(event.get("queryString")) == 0:
+        if len(params) == 0:
             return {
                 "isBase64Encoded": False,
                 "statusCode": 403,
                 "headers": {"Content-Type": "text/plain;charset=UTF-8"},  # this content type is very important
                 "body": 'unable to authenticate'
             }
-        signature = event.get("queryString").get("signature")
-        timestamp = event.get("queryString").get("timestamp")
-        nonce = event.get("queryString").get("nonce")
-        token = "hello"  # 请按照公众平台官网\基本配置中信息填写
-        # note that is different from the example code because we are using python 3 here.
-        l = [token.encode('utf-8'), timestamp.encode('utf-8'), nonce.encode('utf-8')]
-        l.sort()
-        sha1 = hashlib.sha1()
-        # note that is different from the example code because we are using python 3 here.
-        set(map(sha1.update, l))
-        hashcode = sha1.hexdigest()
-        print("handle/GET func: hashcode, signature: ", hashcode, signature)
-        echostr = event.get("queryString").get("echostr")
-        if hashcode == signature:
+        signature = params.get("signature")
+        timestamp = params.get("timestamp")
+        nonce = params.get("nonce")
+        echostr = params.get("echostr")
+        if check_signature(signature, timestamp, nonce, token):
             return {
                 "isBase64Encoded": False,
                 "statusCode": 200,
@@ -43,5 +39,37 @@ def main_handler(event, context):
                 "body": 'unable to authenticate'
             }
     except Exception as exp:
-        return exp
+        return {
+            "isBase64Encoded": False,
+            "statusCode": 403,
+            "headers": {"Content-Type": "text/plain;charset=UTF-8"},  # this content type is very important
+            "body": exp
+        }
+
+
+
+def check_signature(signature, timestamp, nonce, token):
+    # note that is different from the example code because we are using python 3 here.
+    l = [token.encode('utf-8'), timestamp.encode('utf-8'), nonce.encode('utf-8')]
+    l.sort()
+    sha1 = hashlib.sha1()
+    # note that is different from the example code because we are using python 3 here.
+    set(map(sha1.update, l))
+    hashcode = sha1.hexdigest()
+    print("handle/GET func: hashcode, signature: ", hashcode, signature)
+    return hashcode == signature;
+
+def main_handler(event, context):
+    if len(event) == 0 or event.get("queryString") is None:
+        return {
+            "isBase64Encoded": False,
+            "statusCode": 403,
+            "headers": {"Content-Type": "text/plain;charset=UTF-8"},  # this content type is very important
+            "body": 'unable to authenticate'
+        }
+
+    token = "hello"  # we supply this token on the configuration page
+
+    # for simplicity, we comment this method invocation after registration.
+    return registration(event.get("queryString"), token);
 

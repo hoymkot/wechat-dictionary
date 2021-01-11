@@ -8,7 +8,8 @@ import hashlib
 # and then WeChat access this link to invoke this method as the first step.
 #
 # Note that we can port this function to other platform as long as the parameter "params" to registration(params)
-# has the following attributes: signature , timestamp, nonce, and echostr
+# has the following attributes: signature , timestamp, nonce, and echostr, and the return value is modified
+# according the platform specification
 #
 # This function is no longer needed after successful registration.
 #

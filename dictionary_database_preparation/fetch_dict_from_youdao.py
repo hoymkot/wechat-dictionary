@@ -84,7 +84,12 @@ def fetch_definition(word):
         return -1
     else:
         text = resp.text;
-        return parse_def(text);
+        try:
+            return parse_def(text);
+        except Exception as exp:
+            logging.warning(exp);
+            logging.warning(text);
+            return -1;
 
 
 def init():

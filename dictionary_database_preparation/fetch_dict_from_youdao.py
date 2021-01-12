@@ -2,6 +2,7 @@ import requests
 import logging
 import mysql.connector
 import time
+import config_mysql
 
 # A program that pull the English Chinese dictionary from youdao.com.
 #
@@ -102,10 +103,10 @@ if __name__ == '__main__':
     start_time = time.time()
     # mysql connection parameters
     mydb = mysql.connector.connect(
-        host="192.168.1.84",
-        user="myuser",
-        password="mypass",
-        database="dict"
+        host=config_mysql.config["host"],
+        user=config_mysql.config["user"],
+        password=config_mysql.config["password"],
+        database=config_mysql.config["database"]
     )
     mycursor = mydb.cursor()
 

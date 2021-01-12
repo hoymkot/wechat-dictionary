@@ -2,16 +2,18 @@ import json
 import mysql.connector
 from datetime import datetime
 import re
+import config_mysql
+
 # this program convert the dictionary to a python dict (json).
 
 if __name__ == '__main__':
 
     # mysql connection parameters
     mydb = mysql.connector.connect(
-        host="192.168.1.100",
-        user="myuser",
-        password="mypass",
-        database="dict"
+        host=config_mysql.config["host"],
+        user=config_mysql.config["user"],
+        password=config_mysql.config["password"],
+        database=config_mysql.config["database"]
     )
     mycursor = mydb.cursor()
     # mycursor.execute("SELECT word, main, collins FROM dict.dictionary where main is not null and main != 'N/A'  ")

@@ -12,6 +12,10 @@ import normal_dict
 
 class WechatMsgReceiver:
 
+
+    def is_english(self, s):
+        return all( (ord(c) >= ord('a') and ord(c) <= ord('z')) or (ord(c) >= ord('A') and ord(c) <= ord('Z') )for c in s)
+
     def translate(self, recMsg):
         toUser = recMsg.FromUserName
         fromUser = recMsg.ToUserName
@@ -22,12 +26,27 @@ class WechatMsgReceiver:
         replyMsg = reply.TextMsg(toUser, fromUser, defin)
         return WechatMsgReceiver.returnMsg(replyMsg.send())
 
+    def returnMediaIdAndUrl(self, recMsg):
+        toUser = recMsg.FromUserName
+        fromUser = recMsg.ToUserName
+        PicUrl = recMsg.PicUrl
+        MediaId = recMsg.MediaId
+        print(PicUrl)
+        print(MediaId);
+        replyMsg = reply.TextMsg(toUser, fromUser, MediaId + '\n' + PicUrl)
+        return WechatMsgReceiver.returnMsg(replyMsg.send())
+
     def receiveAndReply(self, body):
         try:
             recMsg = receive.parse_xml(body)
-            if isinstance(recMsg, receive.Msg) and recMsg.MsgType == 'text':
-                if (recMsg.Content.decode("utf-8").isalpha()):
-                    return self.translate(recMsg)
+            if isinstance(recMsg, receive.Msg):
+                if recMsg.MsgType == 'text':
+                    if self.is_english(recMsg.Content.decode("utf-8")):
+                        return self.translate(recMsg)
+                    else:
+                        return WechatMsgReceiver.successMsg()
+                elif recMsg.MsgType == 'image':
+                    return self.returnMediaIdAndUrl(recMsg)
                 else:
                     return WechatMsgReceiver.successMsg()
             else:

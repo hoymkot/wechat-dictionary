@@ -2,10 +2,14 @@
 
 import json
 import wechat_msg_receiver
+import logging
+logger = logging.getLogger()
+logger.setLevel(logging.DEBUG) # 日志等级
+
 
 # This is the entry point of Tencent cloud function
 def main_handler(event, context):
-    # print(json.dumps(event))
-    # print(json.dumps(context))
+    logger.debug(json.dumps(event))
+    logger.debug(json.dumps(context))
     return wechat_msg_receiver.main_handler(event, context)
 

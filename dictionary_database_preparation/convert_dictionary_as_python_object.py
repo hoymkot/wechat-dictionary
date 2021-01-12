@@ -8,7 +8,7 @@ if __name__ == '__main__':
 
     # mysql connection parameters
     mydb = mysql.connector.connect(
-        host="192.168.1.84",
+        host="192.168.1.100",
         user="myuser",
         password="mypass",
         database="dict"

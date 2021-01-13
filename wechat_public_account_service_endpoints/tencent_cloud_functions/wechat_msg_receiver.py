@@ -3,6 +3,13 @@
 import receive
 import reply
 import normal_dict
+import logging
+import datetime
+import requests
+import json
+logger = logging.getLogger()
+logger.setLevel(logging.INFO) # 日志等级
+
 # this is a client facing tencent cloud function, so we always return "success"
 # on error to avoid user experience disruption.
 
@@ -26,16 +33,27 @@ class WechatMsgReceiver:
         replyMsg = reply.TextMsg(toUser, fromUser, defin)
         return WechatMsgReceiver.returnMsg(replyMsg.send())
 
-    def returnMediaIdAndUrl(self, recMsg):
+    def returnMediaIdAndUrl(self, recMsg, body):
         toUser = recMsg.FromUserName
         fromUser = recMsg.ToUserName
-        PicUrl = recMsg.PicUrl
-        MediaId = recMsg.MediaId
-        print(PicUrl)
-        print(MediaId);
-        replyMsg = reply.TextMsg(toUser, fromUser, MediaId + '\n' + PicUrl)
+
+        logger.info("<user_file>{}</user_file>".format(body))
+        replyMsg = reply.TextMsg(toUser, fromUser, '上传成功')
+
         return WechatMsgReceiver.returnMsg(replyMsg.send())
 
+
+    #
+    # Types of message available are:
+    # * text
+    # * image
+    # * voice
+    # * video
+    # * short video
+    # * location
+    # * link
+    #
+    # https://developers.weixin.qq.com/doc/offiaccount/Message_Management/Receiving_standard_messages.html
     def receiveAndReply(self, body):
         try:
             recMsg = receive.parse_xml(body)
@@ -45,8 +63,9 @@ class WechatMsgReceiver:
                         return self.translate(recMsg)
                     else:
                         return WechatMsgReceiver.successMsg()
-                elif recMsg.MsgType == 'image':
-                    return self.returnMediaIdAndUrl(recMsg)
+                elif recMsg.MsgType == 'image' or recMsg.MsgType == 'voice' or recMsg.MsgType == 'video' or recMsg.MsgType == 'shortvideo':
+                    # just log the content of the message so another process can download the file for storage.
+                    return self.returnMediaIdAndUrl(recMsg,body)
                 else:
                     return WechatMsgReceiver.successMsg()
             else:

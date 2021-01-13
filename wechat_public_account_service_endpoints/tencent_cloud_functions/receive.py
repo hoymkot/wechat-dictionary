@@ -15,6 +15,18 @@ def parse_xml(web_data):
         return TextMsg(xmlData)
     elif msg_type == 'image':
         return ImageMsg(xmlData)
+    elif msg_type == 'voice':
+        return VoiceMsg(xmlData)
+    elif msg_type == 'video':
+        return VideoMsg(xmlData)
+    elif msg_type == 'shortvideo':
+        return ShortVideoMsg(xmlData)
+    elif msg_type == 'location':
+        return LocationMsg(xmlData)
+    elif msg_type == 'link':
+        return LinkMsg(xmlData)
+    else:
+        return Msg(xmlData)
 
 
 class Msg(object):
@@ -37,3 +49,39 @@ class ImageMsg(Msg):
         Msg.__init__(self, xmlData)
         self.PicUrl = xmlData.find('PicUrl').text
         self.MediaId = xmlData.find('MediaId').text
+
+class VoiceMsg(Msg):
+    def __init__(self, xmlData):
+        Msg.__init__(self, xmlData)
+        self.Format = xmlData.find('Format').text
+        self.MediaId = xmlData.find('MediaId').text
+        self.Recognition = xmlData.find('Recognition').text
+
+
+class VideoMsg(Msg):
+    def __init__(self, xmlData):
+        Msg.__init__(self, xmlData)
+        self.ThumbMediaId = xmlData.find('ThumbMediaId').text
+        self.MediaId = xmlData.find('MediaId').text
+
+class ShortVideoMsg(Msg):
+    def __init__(self, xmlData):
+        Msg.__init__(self, xmlData)
+        self.ThumbMediaId = xmlData.find('ThumbMediaId').text
+        self.MediaId = xmlData.find('MediaId').text
+
+class LocationMsg(Msg):
+    def __init__(self, xmlData):
+        Msg.__init__(self, xmlData)
+        self.Location_X = xmlData.find('Location_X').text
+        self.Location_Y = xmlData.find('Location_Y').text
+        self.Scale = xmlData.find('Scale').text
+        self.Label = xmlData.find('Label').text
+
+class LinkMsg(Msg):
+    def __init__(self, xmlData):
+        Msg.__init__(self, xmlData)
+        self.Title = xmlData.find('Title').text
+        self.Description = xmlData.find('Description').text
+        self.Url = xmlData.find('Url').text
+

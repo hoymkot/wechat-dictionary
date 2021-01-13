@@ -4,7 +4,7 @@ import json
 import wechat_msg_receiver
 import logging
 logger = logging.getLogger()
-logger.setLevel(logging.DEBUG) # 日志等级
+logger.setLevel(logging.INFO) # 日志等级
 
 
 # This is the entry point of Tencent cloud function

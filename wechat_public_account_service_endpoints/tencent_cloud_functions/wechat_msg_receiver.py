@@ -37,7 +37,8 @@ class WechatMsgReceiver:
         toUser = recMsg.FromUserName
         fromUser = recMsg.ToUserName
 
-        logger.info("<user_file>{}</user_file>".format(body))
+        # json is much better than XML and Tencent CLS automatically splits logs with XML tags
+        logger.info("<user_file>{}</user_file>".format(json.dumps(recMsg.__dict__)))
         replyMsg = reply.TextMsg(toUser, fromUser, '上传成功')
 
         return WechatMsgReceiver.returnMsg(replyMsg.send())

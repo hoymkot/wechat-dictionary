@@ -76,8 +76,9 @@ def parse_def(text):
 
 
 def fetch_definition(word):
-    url = 'http://dict.youdao.com/w/';
-    resp = requests.get(url + word)
+    url = "http://dict.youdao.com/w/{}/# keyfrom=dict2.top".format(word)
+    # url = 'http://dict.youdao.com/w/' + word
+    resp = requests.get(url)
 
     if resp.status_code != 200:
         # This means something went wrong.

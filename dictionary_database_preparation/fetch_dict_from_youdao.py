@@ -82,7 +82,7 @@ def fetch_definition(word):
 
     if resp.status_code != 200:
         # This means something went wrong.
-        logging.warning('GET word {}'.format(resp.status_code))
+        logging.warning('GET {} {}'.format(word, resp.status_code))
         return -1
     else:
         text = resp.text;
@@ -122,10 +122,15 @@ if __name__ == '__main__':
             defin = fetch_definition(word)
 
             if (defin != -1):
+
                 sql = "update dict.dictionary set main = %s , collins = %s where id = %s";
                 params = defin + (id, );
-                mycursor.execute(sql, params)
-                mydb.commit()
+                try:
+                    mycursor.execute(sql, params)
+                    mydb.commit()
+                except Exception as exp:
+                    logging.error("unable to insert definition: {} {} {} ".format(exp, sql, params))
+
                 # time.sleep(4)
         mycursor.execute("SELECT id , word FROM dict.dictionary where main is null order by word asc limit 10;")
         myresult = mycursor.fetchall()
